@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 	 * Much of the camera handling is from this tutorial: https://android.jlelse.eu/the-least-you-can-do-with-camera2-api-2971c8c81b8b
 	 */
 	private TextureView textureView;
+	private TextView bglTextView;
 	private TextView colorTextView;
 	private View colorPreview;
 
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
 		BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
 		navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+		bglTextView = findViewById(R.id.bglTextView);
 		colorTextView = findViewById(R.id.colorTextView);
     colorPreview = findViewById(R.id.colorPreview);
 
@@ -180,8 +182,6 @@ public class MainActivity extends AppCompatActivity {
 		super.onResume();
 		openBackgroundThread();
 		if (textureView.isAvailable()) {
-			System.out.println("ONRESUME 1");
-
 			setUpCamera();
 			openCamera();
 		} else {
@@ -190,19 +190,13 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private static boolean parseBitmapLock = false;
-	private static int count = 0;
 	private void parseBitmap() {
 		// lock while running to avoid too much
 		if(parseBitmapLock) {
 			return;
 		}
-		if(count++ >= 5) {
-			//return;
-		}
 		parseBitmapLock = true;
 
-		/*System.out.println("BEGIN GET BITMAP");
-		System.out.println("BITMAP IS AVAILABLE: " + textureView.isAvailable());*/
 		Bitmap bitmap = textureView.getBitmap();
 		if(bitmap == null) return;
 		int width = bitmap.getWidth();
@@ -211,22 +205,15 @@ public class MainActivity extends AppCompatActivity {
 		bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
 		for(int i = 0; i < 100; i++) {
 			int j = pixels[i];
-//			System.out.printf("%d a: %d r: %d g: %d b: %d%n", j, Color.alpha(j), Color.red(j), Color.green(j), Color.blue(j));
 		}
-		/*System.out.println("BITMAP WIDTH: " + bitmap.getWidth());
-		System.out.println("BITMAP HEIGHT: " + bitmap.getHeight());
-		System.out.println("END GET BITMAP");*/
-
-    /*try {
-      System.out.println("SAVING FILE: " + AndroidBitmapUtil.save(bitmap, Environment.getExternalStorageDirectory() + "/Download/out.bmp"));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }*/
 
     VectorRGB averageColor = ColorDetection.getColor(pixels, width, height);
 
     colorTextView.setText(averageColor.toString());
     colorPreview.setBackgroundColor(averageColor.toColorInt());
+
+    double bgl = BGLDetermination.colorToBGL(averageColor);
+		bglTextView.setText("Color %: " + bgl);
 
 		// remove lock
 		parseBitmapLock = false;

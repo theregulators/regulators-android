@@ -30,14 +30,9 @@ public class ColorDetection {
       scaledHeight = maxDim;
     }
 
-    /*System.out.println("RATIO: " + ratio);
-    System.out.println("SCALEDWIDTH: " + scaledWidth);
-    System.out.println("SCALEDHEIGHT: " + scaledHeight);*/
-
     int scaledBitmap[] = new int[scaledWidth * scaledHeight];
     for(int i = 0; i < ratio * scaledHeight; i += ratio) {
       for(int j = 0; j < ratio * scaledWidth; j += ratio) {
-        //System.out.println("INDEX: " + (i / ratio * maxDim + j / ratio) + " i " + i + " j " + j);
         scaledBitmap[(i / ratio * maxDim + j / ratio)] = bitmap[i * width + j * ratio];
       }
     }
@@ -68,27 +63,6 @@ public class ColorDetection {
     VectorRGB significantColorAverage = significantColorSum.timesScalar(1.0/significantColorCount);
 
     System.out.println("SUM: " + significantColorSum.toString() + " COUNT: " + significantColorCount + "AVERAGE COLOR: " + significantColorAverage.toString());
-
-    /*System.out.println("CORNER 1: " + corner1.toString());
-    System.out.println("CORNER 2: " + corner2.toString());
-    System.out.println("CORNER 3: " + corner3.toString());
-    System.out.println("CORNER 4: " + corner4.toString());
-    System.out.println("CORNER 42: " + corner42.toString());
-    System.out.println("CORNER AVERAGE: " + cornerAverage.toString());*/
-
-    /*System.out.printf("CORNER1: %s%nCORNER2: %s%nCORNER3: %s%nCORNER4: %s%nCORNER42: %s%nCORNER AVERAGE: %s%n%n%n%n%n%n%n",
-        corner1.toString(),
-        corner2.toString(),
-        corner3.toString(),
-        corner4.toString(),
-        corner42.toString(),
-        cornerAverage.toString());*/
-
-    /*for(int i = 0; i < scaledBitmap.length; i++) {
-      if(android.graphics.Color.green(scaledBitmap[i]) > 50 && android.graphics.Color.red(scaledBitmap[i]) < 50 && android.graphics.Color.blue(scaledBitmap[i]) < 50) {
-        System.out.println("I " + i + " " + new VectorRGB(scaledBitmap[i]).toString());
-      }
-    }*/
 
     return significantColorAverage;
   }
