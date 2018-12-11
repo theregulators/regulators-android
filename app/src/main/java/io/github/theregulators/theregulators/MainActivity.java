@@ -189,34 +189,49 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-	private static boolean parseBitmapLock = false;
+	public volatile static boolean parseBitmapLock = false;
+  public volatile static String colorTextViewText = "";
+  public volatile static int colorPreviewBackgroundColor = 0;
+  public volatile static String bglTextViewText = "";
 	private void parseBitmap() {
 		// lock while running to avoid too much
-		if(parseBitmapLock) {
-			return;
-		}
-		parseBitmapLock = true;
+		if(MainActivity.parseBitmapLock) {
+      return;
+    }
+    colorTextView.setText(colorTextViewText);
+    colorPreview.setBackgroundColor(colorPreviewBackgroundColor);
+    bglTextView.setText(bglTextViewText);
 
-		Bitmap bitmap = textureView.getBitmap();
-		if(bitmap == null) return;
-		int width = bitmap.getWidth();
-		int height = bitmap.getHeight();
-		int[] pixels = new int[width * height];
-		bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-		for(int i = 0; i < 100; i++) {
-			int j = pixels[i];
-		}
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
 
-    VectorRGB averageColor = ColorDetection.getColor(pixels, width, height);
+        MainActivity.parseBitmapLock = true;
 
-    colorTextView.setText(averageColor.toString());
-    colorPreview.setBackgroundColor(averageColor.toColorInt());
+        Bitmap bitmap = textureView.getBitmap();
+        if(bitmap == null) return;
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int[] pixels = new int[width * height];
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+        for(int i = 0; i < 100; i++) {
+          int j = pixels[i];
+        }
 
-    double bgl = BGLDetermination.colorToBGL(averageColor);
-		bglTextView.setText("Color %: " + bgl);
+        VectorRGB averageColor = ColorDetection.getColor(pixels, width, height);
 
-		// remove lock
-		parseBitmapLock = false;
+        colorTextViewText = averageColor.toString();
+        colorPreviewBackgroundColor = averageColor.toColorInt();
+
+        double bgl = BGLDetermination.colorToBGL(averageColor);
+
+        bglTextViewText = "Color %: " + bgl;
+
+        // remove lock
+        MainActivity.parseBitmapLock = false;
+
+      }
+    }).start();
 	}
 
 	@Override

@@ -15,15 +15,19 @@ public class VectorRGB {
 	}
 
 	public VectorRGB(int packedInt) {
-	  this.r = Color.red(packedInt);
-    this.g = Color.green(packedInt);
-    this.b = Color.blue(packedInt);
+    this.setColor(packedInt);
   }
 
 	public VectorRGB(int[] componentArray) {
 	  this.r = componentArray[0];
     this.g = componentArray[1];
     this.b = componentArray[2];
+  }
+
+  public void setColor(int packedInt) {
+    this.r = Color.red(packedInt);
+    this.g = Color.green(packedInt);
+    this.b = Color.blue(packedInt);
   }
 
 	public double dot(VectorRGB v2) {
