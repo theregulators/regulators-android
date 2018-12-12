@@ -3,6 +3,7 @@ package io.github.theregulators.theregulators;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
@@ -76,8 +77,45 @@ public class ScanFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    // Inflate the layout for this fragment
-    return inflater.inflate(R.layout.fragment_scan, container, false);
+    final View view = inflater.inflate(R.layout.fragment_scan, container, false);
+
+    view.setBackgroundColor(Color.WHITE);
+
+    bglTextView = view.findViewById(R.id.bglTextView);
+    //colorTextView = findViewById(R.id.colorTextView);
+    //colorPreview = findViewById(R.id.colorPreview);
+
+    // test toast!
+//		Toast.makeText(getBaseContext(), "Testing hello world!", Toast.LENGTH_SHORT).show();
+
+    // preview camera
+    cameraManager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
+    cameraFacing = CameraCharacteristics.LENS_FACING_BACK;
+    textureView = view.findViewById(R.id.textureView);
+
+    surfaceTextureListener = new TextureView.SurfaceTextureListener() {
+      @Override
+      public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
+        setUpCamera();
+        openCamera();
+      }
+
+      @Override
+      public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
+      }
+
+      @Override
+      public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+        return false;
+      }
+
+      @Override
+      public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+        parseBitmap();
+      }
+    };
+
+    return view;
   }
 
   // TODO: Rename method, update argument and hook method into UI event
@@ -137,7 +175,7 @@ public class ScanFragment extends Fragment {
   private Handler backgroundHandler;
   private CameraCaptureSession cameraCaptureSession;
 
-  @Override
+  /*@Override
   public void onCreate(Bundle savedInstanceState) {
 
     // check these over
@@ -180,7 +218,7 @@ public class ScanFragment extends Fragment {
         parseBitmap();
       }
     };
-  }
+  }*/
 
   private void setUpCamera() {
     try {
