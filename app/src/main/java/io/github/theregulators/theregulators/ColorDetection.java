@@ -9,6 +9,7 @@ import android.os.Environment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.function.Consumer;
 
 import io.github.theregulators.theregulators.VectorRGB;
 
@@ -29,15 +30,13 @@ public class ColorDetection {
 
   private static class PixelCluster {
     public int pixelCount;
+    public VectorRGB color;
     public List<Pixel> pixelList = new ArrayList<>();
-    //public Pixel center;
+    public PixelCluster(int r, int g, int b) {
+      color = new VectorRGB(r, g, b);
+    }
     public void addPixel(Pixel pixel) {
       pixelList.add(pixel);
-      /*if(pixelCount == 0) {
-        center = pixel;
-      } else {
-        center.setPos((pixelCount * center.x + pixel.x)/pixelCount + 1, (pixelCount * center.x + pixel.x)/pixelCount + 1);
-      }*/
       pixelCount++;
     }
   }
@@ -54,7 +53,7 @@ public class ColorDetection {
     for(i = 0; i < 16; i++) {
       for(j = 0; j < 16; j++) {
         for(k = 0; k < 16; k++) {
-          pixelClusters[i][j][k] = new PixelCluster();
+          pixelClusters[i][j][k] = new PixelCluster(i << 4, j << 4, k << 4);
         }
       }
     }
@@ -81,9 +80,9 @@ public class ColorDetection {
     int lowThresholdCount = width * height / 1000;
     int highThresholdCount = width * height / 2;
     int thresholdNum = 0;
-    VectorRGB closestColor = new VectorRGB(0);
 
-    int maxR = 0, maxG = 0, maxB = 0;
+    List<PixelCluster> chosenClusters = new ArrayList<>();
+
     for(i = 0; i < 16; i++) {
       for(j = 0; j < 16; j++) {
         for(k = 0; k < 16; k++) {
@@ -122,12 +121,28 @@ public class ColorDetection {
             continue;
           }
 
-          System.out.println(thresholdNum++ + ": " + new VectorRGB(i << 4, j << 4, k << 4).toString() + " ERROR: " + error + " RELATIVE ERROR: " + (error / currentPixelCluster.pixelCount) + " PIXEL COUNT: " + currentPixelCluster.pixelCount + " XAVG " + xAvg + " YAVG " + yAvg);
+          //System.out.println(thresholdNum++ + ": " + new VectorRGB(i << 4, j << 4, k << 4).toString() + " ERROR: " + error + " RELATIVE ERROR: " + (error / currentPixelCluster.pixelCount) + " PIXEL COUNT: " + currentPixelCluster.pixelCount + " XAVG " + xAvg + " YAVG " + yAvg);
+          if(k >= i && k >= j && chosenClusters.size() < 4) {
+            chosenClusters.add(currentPixelCluster);
+            System.out.println(thresholdNum++ + ": " + new VectorRGB(i << 4, j << 4, k << 4).toString() + " ERROR: " + error + " RELATIVE ERROR: " + (error / currentPixelCluster.pixelCount) + " PIXEL COUNT: " + currentPixelCluster.pixelCount + " XAVG " + xAvg + " YAVG " + yAvg);
+          }
 
         }
       }
     }
 
-    return closestColor;
+    VectorRGB avgBlue = new VectorRGB(0, 0, 0);
+    int totalCount = 0;
+
+    for(PixelCluster pixelCluster : chosenClusters) {
+      totalCount += pixelCluster.pixelCount;
+      avgBlue = avgBlue.add(new VectorRGB(pixelCluster.color.r, pixelCluster.color.g, pixelCluster.color.b).timesScalar(pixelCluster.pixelCount));
+    }
+    if(totalCount != 0) {
+      avgBlue = avgBlue.timesScalar(1.0 / totalCount);
+    }
+    System.out.println("TOTAL COuNT: " + totalCount + " COLOR: " + avgBlue.toString());
+
+    return avgBlue;
   }
 }
