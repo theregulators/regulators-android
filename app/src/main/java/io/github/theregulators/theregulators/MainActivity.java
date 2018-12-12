@@ -52,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
     mTextMessage = (TextView) findViewById(R.id.message);
     BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+    Fragment fragment = new ScanFragment();
+    FragmentManager fm = getSupportFragmentManager();
+    FragmentTransaction transaction = fm.beginTransaction();
+    transaction.replace(R.id.contentFragment, fragment);
+    transaction.commit();
   }
 
   private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
