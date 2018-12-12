@@ -4,6 +4,7 @@ import io.github.theregulators.theregulators.ColorDetection;
 import io.github.theregulators.theregulators.BGLDetermination;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
 	private Handler backgroundHandler;
 	private CameraCaptureSession cameraCaptureSession;
 
+	private MainActivity _this  = this;
+
 	private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
 		@Override
@@ -69,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
 				case R.id.navigation_dashboard:
 					mTextMessage.setText(R.string.title_dashboard);
 					return true;
-				case R.id.navigation_notifications:
-					mTextMessage.setText(R.string.title_notifications);
+				case R.id.navigation_about:
+					mTextMessage.setText(R.string.title_about);
 					return true;
 			}
 			return false;
@@ -87,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
 		navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
 		bglTextView = findViewById(R.id.bglTextView);
-		colorTextView = findViewById(R.id.colorTextView);
-    colorPreview = findViewById(R.id.colorPreview);
+		//colorTextView = findViewById(R.id.colorTextView);
+    //colorPreview = findViewById(R.id.colorPreview);
 
 		// test toast!
 //		Toast.makeText(getBaseContext(), "Testing hello world!", Toast.LENGTH_SHORT).show();
@@ -190,16 +193,16 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	public volatile static boolean parseBitmapLock = false;
-  public volatile static String colorTextViewText = "";
-  public volatile static int colorPreviewBackgroundColor = 0;
-  public volatile static String bglTextViewText = "";
+  //public volatile static String colorTextViewText = "";
+  //public volatile static int colorPreviewBackgroundColor = 0;
+  public volatile static String bglTextViewText = "---";
 	private void parseBitmap() {
 		// lock while running to avoid too much
 		if(MainActivity.parseBitmapLock) {
       return;
     }
-    colorTextView.setText(colorTextViewText);
-    colorPreview.setBackgroundColor(colorPreviewBackgroundColor);
+    //colorTextView.setText(colorTextViewText);
+    //colorPreview.setBackgroundColor(colorPreviewBackgroundColor);
     bglTextView.setText(bglTextViewText);
 
     new Thread(new Runnable() {
@@ -220,12 +223,12 @@ public class MainActivity extends AppCompatActivity {
 
         VectorRGB averageColor = ColorDetection.getColor(pixels, width, height);
 
-        colorTextViewText = averageColor.toString();
-        colorPreviewBackgroundColor = averageColor.toColorInt();
+        //colorTextViewText = averageColor.toString();
+        //colorPreviewBackgroundColor = averageColor.toColorInt();
 
         double bgl = BGLDetermination.colorToBGL(averageColor);
 
-        bglTextViewText = "Color %: " + bgl;
+        bglTextViewText = "" + (Math.round(bgl * 10.0) / 10.0);
 
         // remove lock
         MainActivity.parseBitmapLock = false;

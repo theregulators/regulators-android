@@ -2,5 +2,10 @@
     <string name="app_name">The Regulators</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_about">About</string>
+    <string name="title_activity_about">About The Regulators Mobile App</string>
+    <string name="bgl_subtitle">Your Blood Glucose Level (mL)</string>
+    <string name="emptyBglValue">---</string>
+    <string name="analyzeButton_text">Analyze</string>
+    <string name="saveButton_text">Save</string>
 </resources>
