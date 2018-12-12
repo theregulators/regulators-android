@@ -78,7 +78,7 @@ public class ColorDetection {
 
     System.out.println("STEP 3: ANALYZING PIXEL CLUSTERS");
 
-    int lowThresholdCount = width * height / 100;
+    int lowThresholdCount = width * height / 1000;
     int highThresholdCount = width * height / 2;
     int thresholdNum = 0;
     VectorRGB closestColor = new VectorRGB(0);
@@ -117,13 +117,12 @@ public class ColorDetection {
           }
           double relativeError = error / currentPixelCluster.pixelCount;
 
-          if(relativeError > 200) {
+          if(relativeError > 150) {
             // FILTER CONDITION 3
             continue;
           }
 
-          System.out.println(thresholdNum++ + ": " + new VectorRGB(i << 4, j << 4, k << 4).toString() + " ERROR: " + error + " RELATIVE ERROR: " + (error / currentPixelCluster.pixelCount) + " PIXEL COUNT: " + currentPixelCluster.pixelCount);
-          System.out.println("\t\t" + xAvg + " " + yAvg);
+          System.out.println(thresholdNum++ + ": " + new VectorRGB(i << 4, j << 4, k << 4).toString() + " ERROR: " + error + " RELATIVE ERROR: " + (error / currentPixelCluster.pixelCount) + " PIXEL COUNT: " + currentPixelCluster.pixelCount + " XAVG " + xAvg + " YAVG " + yAvg);
 
         }
       }
