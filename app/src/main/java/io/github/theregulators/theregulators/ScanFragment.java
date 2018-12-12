@@ -77,6 +77,8 @@ public class ScanFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
+    // look at: https://stackoverflow.com/questions/13305861/fool-proof-way-to-handle-fragment-on-orientation-change
+
     final View view = inflater.inflate(R.layout.fragment_scan, container, false);
 
     view.setBackgroundColor(Color.WHITE);
